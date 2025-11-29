@@ -648,7 +648,7 @@ OUTPUT (JSON only):
 
 **Project Architecture:**
 
-```
+```plaintext
 src/
 ├── components/
 │   ├── MediaBin/
@@ -702,8 +702,10 @@ src/
 │   │   ├── ColorCorrection.tsx
 │   │   ├── KeyframeEditor.tsx
 │   │   └── PropertiesPanel.module.css
+```
 
 **Data Structures:**
+
 ```typescript
 // Project structure
 interface Project {
