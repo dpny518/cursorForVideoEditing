@@ -1,7 +1,3 @@
-Here's the updated one-shot prompt incorporating all the feedback:
-
----
-
 **Project: Local Web-Based AI Video Editor with Chat Interface**
 
 **Core Requirements:**
