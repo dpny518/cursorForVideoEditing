@@ -1,0 +1,110 @@
+.model-load-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+}
+
+.error-card {
+  background: #262626;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.error-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.error-card h2 {
+  margin: 0 0 1rem 0;
+  color: #ef4444;
+  text-align: center;
+}
+
+.error-message {
+  text-align: center;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.error-details {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.error-details h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.error-details ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #ccc;
+}
+
+.error-details li {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.retry-btn,
+.continue-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.retry-btn:hover {
+  background: #2563eb;
+}
+
+.continue-btn {
+  background: #374151;
+  color: white;
+}
+
+.continue-btn:hover {
+  background: #4b5563;
+}
+
+.error-note {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}

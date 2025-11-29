@@ -1,0 +1,318 @@
+.timeline {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.timeline.empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-timeline {
+  text-align: center;
+  color: #666;
+}
+
+.empty-timeline p {
+  margin: 0.5rem 0;
+}
+
+.empty-timeline .hint {
+  font-size: 0.875rem;
+  color: #888;
+  max-width: 400px;
+}
+
+.timeline-header {
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.timeline-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.timeline-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.clip-count {
+  font-size: 0.875rem;
+  color: #888;
+}
+
+.clear-timeline-btn {
+  padding: 0.5rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-timeline-btn:hover {
+  background: #dc2626;
+}
+
+.timeline-tracks {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.track-label {
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #262626;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #888;
+}
+
+.track-content {
+  flex: 1;
+  position: relative;
+  min-width: 800px;
+}
+
+.track-ruler {
+  height: 20px;
+  position: relative;
+  border-bottom: 1px solid #333;
+  margin-bottom: 0.5rem;
+}
+
+.ruler-mark {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.ruler-mark::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 6px;
+  background: #666;
+  top: -8px;
+  left: 50%;
+}
+
+.track-clips {
+  position: relative;
+  height: 80px;
+  background: #0f0f0f;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.timeline-clip {
+  position: absolute;
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+  cursor: grab;
+  transition: all 0.2s;
+  overflow: hidden;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-clip:hover {
+  border-color: #60a5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.timeline-clip.selected {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.timeline-clip.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.timeline-clip.drop-target {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.timeline-clip.drop-target::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.clip-preview {
+  flex: 1;
+  overflow: hidden;
+  opacity: 0.6;
+}
+
+.clip-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  pointer-events: none;
+}
+
+.clip-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clip-duration {
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.remove-clip-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-clip:hover .remove-clip-btn {
+  opacity: 1;
+}
+
+.remove-clip-btn:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.clip-number {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: ew-resize;
+  z-index: 10;
+  transition: all 0.2s;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.resize-handle:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.resize-handle-left {
+  left: 0;
+  border-left: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.resize-handle-right {
+  right: 0;
+  border-right: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.resize-handle-left:hover,
+.resize-handle-right:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.resize-handle-left:hover {
+  border-left-color: #fff;
+}
+
+.resize-handle-right:hover {
+  border-right-color: #fff;
+}
+
+.timeline-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.timeline-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+}

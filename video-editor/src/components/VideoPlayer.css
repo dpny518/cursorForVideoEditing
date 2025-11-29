@@ -1,0 +1,253 @@
+.video-player {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  position: relative;
+}
+
+.video-player.empty {
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.player-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.player-canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.player-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  color: white;
+}
+
+/* Unified Range Selector Container */
+.range-selector-container {
+  background: #0f0f0f;
+  border-top: 1px solid #333;
+  padding: 1rem;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Integrated Controls Bar */
+.integrated-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 0.5rem;
+}
+
+.play-pause-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.play-pause-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.play-pause-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.time-display {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: #ccc;
+  flex: 1;
+  flex-shrink: 0;
+}
+
+.add-to-timeline-btn {
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.add-to-timeline-btn:hover {
+  background: #059669;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Range Track Wrapper */
+.range-track-wrapper {
+  cursor: default;
+}
+
+.range-track {
+  position: relative;
+  height: 80px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: visible;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border: 1px solid #333;
+}
+
+.range-dimmed {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.range-dimmed-left {
+  left: 0;
+}
+
+.range-dimmed-right {
+  right: 0;
+}
+
+.range-selection {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border: 2px solid #f59e0b;
+  box-sizing: border-box;
+  cursor: move;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.range-selection:hover {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.range-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: #f59e0b;
+  cursor: ew-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.range-handle:hover {
+  background: #fb923c;
+}
+
+.range-handle-start {
+  left: -2px;
+  border-radius: 4px 0 0 4px;
+}
+
+.range-handle-end {
+  right: -2px;
+  border-radius: 0 4px 4px 0;
+}
+
+.range-handle-line {
+  width: 2px;
+  height: 20px;
+  background: white;
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.range-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.range-time-markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #888;
+  padding: 0 0.25rem;
+}
+
+.range-time-start,
+.range-time-end {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Playhead indicator */
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-1px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.playhead-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ef4444;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+}
+
+.playhead-handle {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #ef4444;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

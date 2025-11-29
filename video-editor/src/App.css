@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a1a;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.app-header {
+  padding: 1rem 1.5rem;
+  background: #0f0f0f;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #888;
+  font-weight: 400;
+}
+
+.main-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.top-section {
+  height: 40%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: #333;
+  border-bottom: 1px solid #333;
+}
+
+.media-bin-container,
+.preview-container,
+.timeline-preview-container {
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.preview-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.bottom-section {
+  height: 60%;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.timeline-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: #666;
+  font-size: 1rem;
+  gap: 0.5rem;
+}
+
+.help-text {
+  font-size: 0.875rem;
+  color: #888;
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.5;
+}
