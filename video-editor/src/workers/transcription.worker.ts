@@ -53,7 +53,7 @@ self.addEventListener('message', async (event) => {
       console.log('[Worker] Creating pipeline...');
 
       // Create the pipeline
-      pipelineInstance = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny.en', {
+      pipelineInstance = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
         progress_callback: (progress: any) => {
           console.log('[Worker] Progress:', progress);
 
@@ -111,8 +111,6 @@ self.addEventListener('message', async (event) => {
         return_timestamps: 'word',
         chunk_length_s: 30,
         stride_length_s: 5,
-        language: language || 'english',
-        task: 'transcribe',
       });
 
       const endTime = performance.now();

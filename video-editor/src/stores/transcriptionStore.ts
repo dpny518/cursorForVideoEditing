@@ -48,6 +48,18 @@ export const useTranscriptionStore = create<TranscriptionStore>((set, get) => ({
 
     console.log('[TranscriptionStore] Worker created:', worker);
 
+    // Request persistent storage
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().then(persistent => {
+        if (persistent) {
+          console.log('[TranscriptionStore] Storage will not be cleared except by explicit user action.');
+        } else {
+          console.log('[TranscriptionStore] Storage may be cleared by the browser under storage pressure.');
+        }
+      });
+    }
+
+
     worker.addEventListener('error', (error) => {
       console.error('[TranscriptionStore] Worker error:', error);
       set({
@@ -56,6 +68,77 @@ export const useTranscriptionStore = create<TranscriptionStore>((set, get) => ({
         modelReady: false
       });
     });
+
+    const groupWordsIntoSegments = (words: any[], frameRate = 30) => {
+      if (!words || words.length === 0) {
+        return [];
+      }
+    
+      const segments: any[] = [];
+      if (words.length === 0) {
+        return segments;
+      }
+    
+      const MAX_WORDS_PER_SEGMENT = 12;
+      const MAX_PAUSE_S = 0.75;
+    
+      let currentSegment: any = {
+        id: `segment_0`,
+        start: words[0].timestamp[0],
+        end: words[0].timestamp[1],
+        text: words[0].text,
+        words: [{ ...words[0], id: `word_0_0` }],
+      };
+    
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const prevWord = words[i - 1];
+        const pause = word.timestamp[0] - prevWord.timestamp[1];
+    
+        if (
+          currentSegment.words.length >= MAX_WORDS_PER_SEGMENT ||
+          pause > MAX_PAUSE_S
+        ) {
+          // Finalize the current segment
+          segments.push({
+            ...currentSegment,
+            startFrame: Math.round(currentSegment.start * frameRate),
+            endFrame: Math.round(currentSegment.end * frameRate),
+            speakerId: 'speaker_0', // Default speaker
+            confidence: 0.9, // Default confidence
+          });
+    
+          // Start a new segment
+          currentSegment = {
+            id: `segment_${segments.length}`,
+            start: word.timestamp[0],
+            end: word.timestamp[1],
+            text: word.text,
+            words: [{ ...word, id: `word_${segments.length}_0` }],
+          };
+        } else {
+          // Add word to the current segment
+          currentSegment.end = word.timestamp[1];
+          currentSegment.text += ` ${word.text}`;
+          currentSegment.words.push({
+            ...word,
+            id: `word_${segments.length}_${currentSegment.words.length}`,
+          });
+        }
+      }
+    
+      // Add the last segment
+      segments.push({
+        ...currentSegment,
+        startFrame: Math.round(currentSegment.start * frameRate),
+        endFrame: Math.round(currentSegment.end * frameRate),
+        speakerId: 'speaker_0',
+        confidence: 0.9,
+      });
+    
+      return segments;
+    };
+
 
     worker.addEventListener('message', (event) => {
       const { type, message, progress, result, executionTime, mediaId, error } = event.data;
@@ -108,35 +191,9 @@ export const useTranscriptionStore = create<TranscriptionStore>((set, get) => ({
             const chunks = result.chunks || [];
 
             console.log('[TranscriptionStore] Chunks:', chunks);
+            
+            const segments = groupWordsIntoSegments(chunks, 30);
 
-            // Convert chunks to segments with word-level timestamps
-            const segments = chunks.map((chunk: any, index: number) => {
-              const startTime = chunk.timestamp?.[0] || 0;
-              const endTime = chunk.timestamp?.[1] || startTime + 1;
-
-              // Extract words if available
-              const words = (chunk.words || []).map((word: any, wordIndex: number) => ({
-                id: `word_${index}_${wordIndex}`,
-                start: word.timestamp?.[0] || startTime,
-                end: word.timestamp?.[1] || endTime,
-                startFrame: Math.round((word.timestamp?.[0] || startTime) * 30),
-                endFrame: Math.round((word.timestamp?.[1] || endTime) * 30),
-                text: word.text || word.word || '',
-                confidence: word.confidence || 0.9,
-              }));
-
-              return {
-                id: `segment_${index}`,
-                start: startTime,
-                end: endTime,
-                startFrame: Math.round(startTime * 30),
-                endFrame: Math.round(endTime * 30),
-                text: chunk.text?.trim() || '',
-                words,
-                speakerId: 'speaker_0',
-                confidence: 0.9,
-              };
-            });
 
             const transcript: Transcript = {
               id: `transcript_${mediaId}_${Date.now()}`,
@@ -151,7 +208,7 @@ export const useTranscriptionStore = create<TranscriptionStore>((set, get) => ({
                 segmentIds: segments.map(s => s.id),
               }],
               generatedAt: new Date().toISOString(),
-              modelVersion: 'Xenova/whisper-tiny.en',
+              modelVersion: 'Xenova/whisper-tiny',
               editHistory: [],
             };
 
@@ -183,6 +240,7 @@ export const useTranscriptionStore = create<TranscriptionStore>((set, get) => ({
           break;
       }
     });
+
 
     set({ worker });
   },

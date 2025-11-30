@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useTranscriptionStore } from '../stores/transcriptionStore';
 import { useUIStore } from '../stores/uiStore';
+import { useTimelineStore } from '../stores/timelineStore';
+import { useProjectStore } from '../stores/projectStore';
 import './TranscriptPanel.css';
 
 export default function TranscriptPanel() {
@@ -10,6 +13,11 @@ export default function TranscriptPanel() {
   const activeTranscription = useTranscriptionStore((state) =>
     selectedMediaId ? state.activeTranscriptions.get(selectedMediaId) : undefined
   );
+  const addClipToTimeline = useTimelineStore((state) => state.addClipToTimeline);
+  const getMediaItem = useProjectStore((state) => state.getMediaItem);
+
+  const [selection, setSelection] = useState<{ startWordId: string | null; endWordId: string | null }>({ startWordId: null, endWordId: null });
+  const [isSelecting, setIsSelecting] = useState(false);
 
   if (!selectedMediaId) {
     return (
@@ -51,6 +59,67 @@ export default function TranscriptPanel() {
     );
   }
 
+  const allWords = transcript.segments.flatMap(s => s.words);
+
+  const handleMouseDown = (wordId: string) => {
+    setIsSelecting(true);
+    setSelection({ startWordId: wordId, endWordId: wordId });
+  };
+
+  const handleMouseEnter = (wordId: string) => {
+    if (isSelecting) {
+      setSelection(prev => ({ ...prev, endWordId: wordId }));
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsSelecting(false);
+  };
+
+  const getWordById = (wordId: string) => {
+    return allWords.find(w => w.id === wordId);
+  }
+
+  const isWordSelected = (wordId: string) => {
+    if (!selection.startWordId || !selection.endWordId) return false;
+
+    const startIndex = allWords.findIndex(w => w.id === selection.startWordId);
+    const endIndex = allWords.findIndex(w => w.id === selection.endWordId);
+    const currentIndex = allWords.findIndex(w => w.id === wordId);
+
+    if (startIndex === -1 || endIndex === -1 || currentIndex === -1) return false;
+
+    const [start, end] = [startIndex, endIndex].sort((a, b) => a - b);
+    return currentIndex >= start && currentIndex <= end;
+  };
+
+  const handleAddToTimeline = () => {
+    if (!selection.startWordId || !selection.endWordId || !selectedMediaId) return;
+  
+    const startIndex = allWords.findIndex(w => w.id === selection.startWordId);
+    const endIndex = allWords.findIndex(w => w.id === selection.endWordId);
+  
+    if (startIndex === -1 || endIndex === -1) return;
+  
+    const [start, end] = [startIndex, endIndex].sort((a, b) => a - b);
+    const startWord = allWords[start];
+    const endWord = allWords[end];
+  
+    const mediaItem = getMediaItem(selectedMediaId);
+    if (!mediaItem) return;
+  
+    addClipToTimeline(
+      selectedMediaId,
+      mediaItem.name,
+      mediaItem.duration,
+      startWord.start,
+      endWord.end
+    );
+  
+    // Reset selection
+    setSelection({ startWordId: null, endWordId: null });
+  };
+
   const formatTimestamp = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -63,13 +132,20 @@ export default function TranscriptPanel() {
       <div className="transcript-header">
         <h3>Transcript</h3>
         <div className="transcript-actions">
+          <button 
+            className="add-to-timeline-btn"
+            disabled={!selection.startWordId}
+            onClick={handleAddToTimeline}
+          >
+            Add to Timeline
+          </button>
           <button className="export-btn" title="Export Transcript">
             Export
           </button>
         </div>
       </div>
 
-      <div className="transcript-content">
+      <div className="transcript-content" onMouseUp={handleMouseUp}>
         {transcript.segments.map((segment) => (
           <div key={segment.id} className="transcript-segment">
             <div className="segment-header">
@@ -79,13 +155,19 @@ export default function TranscriptPanel() {
               <span className="speaker-label">
                 {transcript.speakers.find(s => s.id === segment.speakerId)?.displayName || 'Speaker'}
               </span>
-              <span className="confidence-badge" style={{
-                backgroundColor: segment.confidence > 0.8 ? '#10b981' : segment.confidence > 0.6 ? '#f59e0b' : '#ef4444'
-              }}>
-                {Math.round(segment.confidence * 100)}%
-              </span>
             </div>
-            <p className="segment-text">{segment.text}</p>
+            <p className="segment-text">
+              {segment.words.map(word => (
+                <span
+                  key={word.id}
+                  className={`word ${isWordSelected(word.id) ? 'selected' : ''}`}
+                  onMouseDown={() => handleMouseDown(word.id)}
+                  onMouseEnter={() => handleMouseEnter(word.id)}
+                >
+                  {word.text}{' '}
+                </span>
+              ))}
+            </p>
           </div>
         ))}
 

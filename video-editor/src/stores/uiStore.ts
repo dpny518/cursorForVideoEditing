@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type PanelView = 'video' | 'transcript';
+type PanelView = 'video' | 'transcript' | 'chat';
 
 interface UIStore {
   selectedMediaId: string | null;
@@ -23,10 +23,28 @@ export const useUIStore = create<UIStore>((set, get) => ({
   rightPanelView: 'video',
   setMiddlePanelView: (view) => set({ middlePanelView: view }),
   setRightPanelView: (view) => set({ rightPanelView: view }),
-  toggleMiddlePanelView: () => set({
-    middlePanelView: get().middlePanelView === 'video' ? 'transcript' : 'video'
-  }),
-  toggleRightPanelView: () => set({
-    rightPanelView: get().rightPanelView === 'video' ? 'transcript' : 'video'
-  }),
+  toggleMiddlePanelView: () => {
+    const currentView = get().middlePanelView;
+    let nextView: PanelView;
+    if (currentView === 'video') {
+      nextView = 'transcript';
+    } else if (currentView === 'transcript') {
+      nextView = 'chat';
+    } else {
+      nextView = 'video';
+    }
+    set({ middlePanelView: nextView });
+  },
+  toggleRightPanelView: () => {
+    const currentView = get().rightPanelView;
+    let nextView: PanelView;
+    if (currentView === 'video') {
+      nextView = 'transcript';
+    } else if (currentView === 'transcript') {
+      nextView = 'chat';
+    } else {
+      nextView = 'video';
+    }
+    set({ rightPanelView: nextView });
+  },
 }));

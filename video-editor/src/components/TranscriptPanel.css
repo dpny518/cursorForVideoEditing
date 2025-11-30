@@ -103,7 +103,8 @@
   gap: 0.5rem;
 }
 
-.export-btn {
+.export-btn,
+.add-to-timeline-btn {
   padding: 0.5rem 1rem;
   background: #3b82f6;
   color: white;
@@ -114,8 +115,14 @@
   transition: background 0.2s;
 }
 
-.export-btn:hover {
+.export-btn:hover,
+.add-to-timeline-btn:hover {
   background: #2563eb;
+}
+
+.add-to-timeline-btn:disabled {
+  background: #444;
+  cursor: not-allowed;
 }
 
 .transcript-content {
@@ -163,6 +170,17 @@
   margin: 0;
   line-height: 1.6;
   color: #e5e5e5;
+  user-select: none;
+}
+
+.segment-text .word {
+  cursor: pointer;
+}
+
+.segment-text .word.selected {
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 3px;
 }
 
 .empty-transcript {

@@ -1,6 +1,7 @@
 import { useUIStore } from '../stores/uiStore';
 import VideoPlayer from './VideoPlayer';
 import TranscriptPanel from './TranscriptPanel';
+import ChatPanel from './ChatPanel';
 import TimelinePreview from './TimelinePreview';
 import './PreviewPanel.css';
 
@@ -14,8 +15,8 @@ export default function PreviewPanel({ panel, showTimeline = false }: PreviewPan
   const view = useUIStore((state) =>
     panel === 'middle' ? state.middlePanelView : state.rightPanelView
   );
-  const toggleView = useUIStore((state) =>
-    panel === 'middle' ? state.toggleMiddlePanelView : state.toggleRightPanelView
+  const setView = useUIStore((state) =>
+    panel === 'middle' ? state.setMiddlePanelView : state.setRightPanelView
   );
 
   return (
@@ -24,15 +25,21 @@ export default function PreviewPanel({ panel, showTimeline = false }: PreviewPan
         <div className="view-toggle">
           <button
             className={`toggle-btn ${view === 'video' ? 'active' : ''}`}
-            onClick={() => toggleView()}
+            onClick={() => setView('video')}
           >
             🎬 Video
           </button>
           <button
             className={`toggle-btn ${view === 'transcript' ? 'active' : ''}`}
-            onClick={() => toggleView()}
+            onClick={() => setView('transcript')}
           >
             📝 Transcript
+          </button>
+          <button
+            className={`toggle-btn ${view === 'chat' ? 'active' : ''}`}
+            onClick={() => setView('chat')}
+          >
+            💬 Chat
           </button>
         </div>
         <div className="panel-label">
@@ -41,15 +48,15 @@ export default function PreviewPanel({ panel, showTimeline = false }: PreviewPan
       </div>
 
       <div className="preview-panel-content">
-        {view === 'video' ? (
+        {view === 'video' && (
           showTimeline ? (
             <TimelinePreview />
           ) : (
             <VideoPlayer mediaId={selectedMediaId || undefined} />
           )
-        ) : (
-          <TranscriptPanel />
         )}
+        {view === 'transcript' && <TranscriptPanel />}
+        {view === 'chat' && <ChatPanel />}
       </div>
     </div>
   );
